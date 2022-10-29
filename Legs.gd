@@ -12,15 +12,11 @@ export var speed: float = 500
 func _ready() -> void:
 	pass # Replace with function body.
 
-
 func _physics_process(delta: float) -> void:
-	
-	# apply_central_impulse(-linear_velocity.normalized() * damp * delta * linear_velocity.length_squared())
-	
 	for x in get_colliding_bodies():
 		if x.get_name() == "GroundCollider":
 			if Input.is_action_pressed("move_left"):
-				apply_central_impulse(Vector2.LEFT * speed * delta)
+				apply_central_impulse(Vector2.LEFT * speed * delta * weight)
 			elif Input.is_action_pressed("move_right"):
-				apply_central_impulse(Vector2.RIGHT * speed * delta)
-			
+				apply_central_impulse(Vector2.RIGHT * speed * delta * weight)
+
