@@ -7,6 +7,7 @@ extends RigidBody2D
 
 export var speed: float = 500
 export var jumpForce = 8
+export var can_move = true
 var partScene = preload("res://Part.tscn")
 
 var head = self
@@ -25,6 +26,7 @@ func _process(_delta: float) -> void:
 		head = part.get_node("Body")
 
 func _physics_process(delta: float) -> void:
+	if not can_move: return
 	for x in get_colliding_bodies():
 		if x.get_name() == "GroundCollider":
 			if Input.is_action_pressed("move_left"):

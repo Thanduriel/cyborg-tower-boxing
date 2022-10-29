@@ -7,7 +7,7 @@ export var terminus_node : NodePath setget set_terminus_path
 
 export var rotate_terminus : bool
 
-export var joint_range_degrees : float = 90.0
+export var joint_range_degrees : float = 175.0
 export var precision_cycles : int = 32
 
 var origin : Node2D
@@ -25,13 +25,13 @@ func _ready():
 
 
 func reach_toward(coordinate : Vector2):
-	print("call")
 	var _distance = 99999999.99
 	for cycle in precision_cycles:
 		_distance = cycle(coordinate)
 
 
 func cycle(target_position : Vector2) -> float:
+	var cnt = 0
 	for link in ik_chain:
 		if link == terminus:
 			if rotate_terminus:
@@ -44,8 +44,14 @@ func cycle(target_position : Vector2) -> float:
 		if abs(rotation_amount) > limit:
 			rotation_amount = limit * sign(rotation_amount)
 		link.rotation += rotation_amount
-		if abs(link.rotation) > limit:
-			link.rotation = limit * sign(link.rotation)
+		# stupid logic to dont bend elbow in the wrong direction
+		if cnt != 1:
+			if abs(link.rotation) > limit:
+				link.rotation = limit * sign(link.rotation)
+		else:
+			if link.rotation > limit: link.rotation = limit
+			elif link.rotation < 0: link.rotation = 0	
+		cnt += 1
 	return (target_position - terminus.global_position).length()
 
 
