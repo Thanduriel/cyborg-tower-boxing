@@ -4,14 +4,15 @@
 [ext_resource path="res://Legs.gd" type="Script" id=2]
 
 [sub_resource type="PhysicsMaterial" id=3]
+friction = 10.0
+rough = true
 
 [sub_resource type="CapsuleShape2D" id=2]
 radius = 25.0
 height = 30.0
 
 [sub_resource type="PhysicsMaterial" id=4]
-friction = 10.0
-rough = true
+friction = 0.0
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 32.2197, 31 )
@@ -23,8 +24,11 @@ position = Vector2( 217, 418 )
 mode = 2
 mass = 4.0
 physics_material_override = SubResource( 3 )
+contacts_reported = 3
+contact_monitor = true
+linear_damp = 0.5
 script = ExtResource( 2 )
-speed = 200
+speed = 8000.0
 
 [node name="Icon" type="Sprite" parent="Legs"]
 texture = ExtResource( 1 )
@@ -37,9 +41,8 @@ position = Vector2( 530, 523 )
 scale = Vector2( 13.6562, 1 )
 texture = ExtResource( 1 )
 
-[node name="StaticBody2D" type="StaticBody2D" parent="Ground"]
+[node name="GroundCollider" type="StaticBody2D" parent="Ground"]
 physics_material_override = SubResource( 4 )
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground/StaticBody2D"]
-scale = Vector2( 1, 1 )
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground/GroundCollider"]
 shape = SubResource( 1 )
