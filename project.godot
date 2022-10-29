@@ -14,6 +14,11 @@ _global_script_classes=[ {
 "language": "NativeScript",
 "path": "res://addons/godot-git-plugin/git_api.gdns"
 }, {
+"base": "Node",
+"class": "InverseKinematic",
+"language": "GDScript",
+"path": "res://InverseKinematic.gd"
+}, {
 "base": "Node2D",
 "class": "Part",
 "language": "GDScript",
@@ -21,6 +26,7 @@ _global_script_classes=[ {
 } ]
 _global_script_class_icons={
 "GitAPI": "",
+"InverseKinematic": "",
 "Part": ""
 }
 
