@@ -25,7 +25,6 @@ shape = SubResource( 1 )
 [node name="Bone2D" type="Bone2D" parent="Body/Skeleton2D"]
 position = Vector2( 30, 1 )
 rotation = 0.751155
-scale = Vector2( 1, 1 )
 rest = Transform2D( 0.465617, 0.884987, -0.884987, 0.465617, 30, 1 )
 __meta__ = {
 "_edit_bone_": true,
