@@ -11,13 +11,53 @@ script = ExtResource( 1 )
 
 [node name="Body" type="RigidBody2D" parent="."]
 mass = 0.2
-linear_damp = 2.0
+gravity_scale = 0.5
+linear_damp = 1.0
 
 [node name="Icon" type="Sprite" parent="Body"]
 texture = ExtResource( 2 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Body"]
 shape = SubResource( 1 )
+
+[node name="Skeleton2D" type="Skeleton2D" parent="Body"]
+
+[node name="Bone2D" type="Bone2D" parent="Body/Skeleton2D"]
+position = Vector2( 30, 1 )
+rotation = 0.751155
+scale = Vector2( 1, 1 )
+rest = Transform2D( 0.465617, 0.884987, -0.884987, 0.465617, 30, 1 )
+__meta__ = {
+"_edit_bone_": true,
+"_edit_ik_": true
+}
+
+[node name="Sprite" type="Sprite" parent="Body/Skeleton2D/Bone2D"]
+position = Vector2( 33.8435, -0.743394 )
+scale = Vector2( 1.12612, 0.175615 )
+texture = ExtResource( 2 )
+
+[node name="Bone2D" type="Bone2D" parent="Body/Skeleton2D/Bone2D"]
+position = Vector2( 69.8151, -1.68694 )
+rotation = -1.39293
+rest = Transform2D( -0.407472, -0.913217, 0.913217, -0.407472, 69.8151, -1.68694 )
+__meta__ = {
+"_edit_bone_": true
+}
+
+[node name="Bone2D" type="Bone2D" parent="Body/Skeleton2D/Bone2D/Bone2D"]
+position = Vector2( 71.4363, -7.86497 )
+rotation = 0.632821
+rest = Transform2D( 1, 0, 0, 1, 71.4363, -7.86497 )
+default_length = 33.0
+__meta__ = {
+"_edit_bone_": true
+}
+
+[node name="Sprite" type="Sprite" parent="Body/Skeleton2D/Bone2D/Bone2D"]
+position = Vector2( 36.465, -3.97625 )
+scale = Vector2( 1.0292, 0.185824 )
+texture = ExtResource( 2 )
 
 [node name="Spring left" type="DampedSpringJoint2D" parent="."]
 position = Vector2( -24, 74 )
@@ -42,4 +82,4 @@ damping = 2.0
 [node name="PinJoint2D" type="PinJoint2D" parent="."]
 position = Vector2( 2, 38 )
 node_b = NodePath("../Body")
-disable_collision = false
+bias = 0.409

@@ -6,6 +6,7 @@ extends RigidBody2D
 # var b: String = "text"
 
 export var speed: float = 500
+export var jumpForce = 8
 var partScene = preload("res://Part.tscn")
 
 var head = self
@@ -30,4 +31,6 @@ func _physics_process(delta: float) -> void:
 				apply_central_impulse(Vector2.LEFT * speed * delta * weight)
 			elif Input.is_action_pressed("move_right"):
 				apply_central_impulse(Vector2.RIGHT * speed * delta * weight)
+			if Input.is_key_pressed(KEY_UP):
+				apply_central_impulse(Vector2.UP * jumpForce * weight)
 
