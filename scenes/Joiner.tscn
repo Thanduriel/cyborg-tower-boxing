@@ -10,7 +10,6 @@ position = Vector2( -24, 74 )
 rotation = -3.14159
 node_b = NodePath("../../Body")
 bias = 0.9
-disable_collision = false
 length = 70.0
 stiffness = 64.0
 damping = 2.0
@@ -20,12 +19,12 @@ position = Vector2( 30, 73 )
 rotation = -3.14159
 node_b = NodePath("../../Body")
 bias = 0.9
-disable_collision = false
 length = 70.0
 stiffness = 64.0
 damping = 2.0
 
 [node name="PinJoint2D" type="PinJoint2D" parent="."]
 position = Vector2( 2, 38 )
+rotation = 0.00235063
 node_b = NodePath("../../Body")
 bias = 0.409

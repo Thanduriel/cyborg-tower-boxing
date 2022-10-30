@@ -1,23 +1,15 @@
 extends RigidBody2D
 
-
-# Declare member variables here. Examples:
-# var a: int = 2
-# var b: String = "text"
-
 export var speed: float = 500
 export var jumpForce = 8
 var partScene = preload("res://Part.tscn")
-export var dont_move: bool = false
-var head = self
 var stand_left = true
 var fixed_foot_pos = Vector2.ZERO
 var walking_ani_fact = 0.03
 var forward_dir = 1.0
-
+export var isPlayerB = false
 
 onready var parts = [self, $Head]
-
 
 onready var hip = $"Visual/Skeleton2D/center/hip"
 
@@ -35,12 +27,13 @@ func _process(_delta: float) -> void:
 		var part = partScene.instance()
 		part.global_position = prev.global_position + up * 70
 		part.global_rotation = prev.global_rotation
+		part.isPlayerB = isPlayerB
 		var bodyPart = part.get_node("Body")
 		get_tree().root.add_child(part)
 		part.get_node("Joiner").stack(prev.get_path(), bodyPart.get_path())
 		parts.push_back(bodyPart)
 
-		head.global_position = part.global_position + up * 80
+		head.global_position = part.global_position + up * 100
 		head.global_rotation = part.global_rotation
 		head.get_node("Joiner").stack(bodyPart.get_path(), head.get_path())
 		parts.push_back(head)
@@ -52,18 +45,19 @@ func _physics_process(delta: float) -> void:
 		if x.get_name() == "GroundCollider":
 			is_touching_ground = true
 			break
-			
-	if not dont_move and is_touching_ground:
-		if Input.is_action_pressed("move_left"):
+
+	if is_touching_ground:
+		var pre = "b_" if isPlayerB else "a_"
+		if Input.is_action_pressed(pre + "move_left"):
 			apply_central_impulse(Vector2.LEFT * speed * delta * weight)
-		elif Input.is_action_pressed("move_right"):
+		elif Input.is_action_pressed(pre + "move_right"):
 			apply_central_impulse(Vector2.RIGHT * speed * delta * weight)
 		if Input.is_key_pressed(KEY_UP):
 			apply_central_impulse(Vector2.UP * jumpForce * weight)
-			
+
 	var space_state = get_world_2d().get_direct_space_state()
-	$"Visual/Skeleton2D/center/hip".rotation = -global_rotation 
-	
+	$"Visual/Skeleton2D/center/hip".rotation = -global_rotation
+
 	# walking
 	if is_touching_ground:
 		var moving_foot = $"Visual/Skeleton2D/center/hip/leg_left/culf_left/lower_left"
@@ -79,7 +73,7 @@ func _physics_process(delta: float) -> void:
 			fixed_foot = $"Visual/Skeleton2D/center/hip/leg_left/culf_left/lower_left"
 			fixed_ik = $"IK-Left"
 			fixed_leg = $"Visual/Skeleton2D/center/hip/leg_left"
-		
+
 		var pos = moving_leg.global_position
 		var v = linear_velocity.x
 		pos.x = moving_foot.global_position.x + walking_ani_fact * v
@@ -87,14 +81,14 @@ func _physics_process(delta: float) -> void:
 		if result.size():
 			moving_ik.reach_toward(result.position)
 			moving_foot.global_rotation = Vector2.UP.angle_to_point(result.normal)
-			
+
 		pos = fixed_leg.global_position
 		pos.x = fixed_foot_pos.x
 		result = space_state.intersect_ray(pos,pos + Vector2.DOWN * 200, [self])
 		if result.size():
 			fixed_foot.global_rotation = Vector2.UP.angle_to_point(result.normal)
 		fixed_ik.reach_toward(fixed_foot_pos)
-			
+
 		# switch legs if the fixed pos is streched to far
 		var d = fixed_foot.global_position.distance_to(fixed_foot_pos)
 		#var d = $"Skeleton2D/center/hip".global_position.distance_to(fixed_foot_pos)
