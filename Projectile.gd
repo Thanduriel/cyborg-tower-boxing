@@ -22,7 +22,7 @@ func _ready() -> void:
 #	pass
 
 func _physics_process(delta: float) -> void:
-	move_and_collide(direction.rotated(parent.global_rotation) * speed * delta)
+	var _c = move_and_collide(direction.rotated(parent.global_rotation) * speed * delta)
 	global_rotation = parent.global_rotation
 
 

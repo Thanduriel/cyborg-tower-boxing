@@ -20,10 +20,10 @@ func shoot() -> void:
 	proj.parent = $"Body"
 	proj.direction = offset.normalized()
 	get_tree().root.add_child(proj)
-	
+
 func _ready() -> void:
 	shoot()
-	
+
 	# var tracker = RemoteTransform2D.new()
 	# proj.add_child(tracker)
 	# tracker.update_position = true
@@ -39,7 +39,7 @@ func _process(delta: float) -> void:
 	if progress.value > 0: progress.value -= delta * 40
 	if ready and progress.value <= 0 and Input.is_action_just_pressed("hit"):
 		shoot()
-	if proj and is_instance_valid(proj) and not proj.is_queued_for_deletion(): 
+	if proj and is_instance_valid(proj) and not proj.is_queued_for_deletion():
 		proj_valid = true
 		$"Body/InverseKinematic".reach_toward(proj.global_position)
 		if (proj.global_position - $"Body/Skeleton2D/Bone2D/Bone2D/Bone2D".global_position).length_squared() > 20:
@@ -55,15 +55,15 @@ func stack(base: NodePath) -> void:
 	$"Spring left".node_a = base
 	$"Spring right".node_a = base
 	$"PinJoint2D".node_a = base
-	
-func _on_Tween_completed(object, key):
+
+func _on_Tween_completed(_object, _key):
 	pass # Replace with function body.
 
 
 
-func _on_Tween_tween_step(object, key, elapsed, value):
+func _on_Tween_tween_step(_object, _key, _elapsed, value):
 	$"Body/InverseKinematic".reach_toward($"Body".global_position + offset.normalized().rotated($"Body".global_rotation) * value)
 
 
-func _on_Tween_tween_completed(object, key):
+func _on_Tween_tween_completed(_object, _key):
 	ready = true

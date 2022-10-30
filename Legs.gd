@@ -11,6 +11,8 @@ var partScene = preload("res://Part.tscn")
 export var dont_move: bool = false
 var head = self
 
+onready var hip = $"Visual/Skeleton2D/center/hip"
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	pass # Replace with function body.
@@ -26,20 +28,20 @@ func _process(_delta: float) -> void:
 
 func _physics_process(delta: float) -> void:
 	var space_state = get_world_2d().get_direct_space_state()
-	$"Skeleton2D/center/hip".rotation = -global_rotation 
-	
-	var pos = $"Skeleton2D/center/hip/leg_left".global_position
+	hip.rotation = -global_rotation
+
+	var pos = hip.get_node("leg_left").global_position
 	var result = space_state.intersect_ray(pos,pos + Vector2.DOWN * 200, [self])
 	if result.size():
 		$"IK-Left".reach_toward(result.position)
-		$"Skeleton2D/center/hip/leg_left/culf_left/lower_left".global_rotation = Vector2.UP.angle_to_point(result.normal)
-	pos = $"Skeleton2D/center/hip/leg_right".global_position
+		hip.get_node("leg_left/culf_left/lower_left").global_rotation = Vector2.UP.angle_to_point(result.normal)
+	pos = hip.get_node("leg_right").global_position
 	result = space_state.intersect_ray(pos,pos + Vector2.DOWN * 200, [self])
 	if result.size():
 		$"IK-Right".reach_toward(result.position)
-		$"Skeleton2D/center/hip/leg_right/culf_right/lower_rigth".global_rotation = Vector2.UP.angle_to_point(result.normal)
-	
-	
+		hip.get_node("leg_right/culf_right/lower_rigth").global_rotation = Vector2.UP.angle_to_point(result.normal)
+
+
 	if not dont_move:
 		for x in get_colliding_bodies():
 			if x.get_name() == "GroundCollider":

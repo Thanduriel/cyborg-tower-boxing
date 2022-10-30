@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://RobotoMono.tres" type="DynamicFont" id=1]
+
+[node name="RoundTimer" type="Label"]
+unique_name_in_owner = true
+margin_left = 2.0
+margin_top = 1.0
+margin_right = 1025.0
+margin_bottom = 107.0
+custom_fonts/font = ExtResource( 1 )
+text = "1234"
+align = 1
