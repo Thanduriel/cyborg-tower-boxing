@@ -24,6 +24,7 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	var _c = move_and_collide(direction * speed * delta)
+	speed += 10000 * delta
 
 
 func _on_Area2D_body_entered(body: Node) -> void:

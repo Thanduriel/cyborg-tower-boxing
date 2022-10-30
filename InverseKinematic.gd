@@ -45,12 +45,12 @@ func cycle(target_position : Vector2) -> float:
 			rotation_amount = limit * sign(rotation_amount)
 		link.rotation += rotation_amount
 		# stupid logic to dont bend elbow in the wrong direction
-		if cnt != 1 or not is_elbow:
+		if cnt != 0 or not is_elbow:
 			if abs(link.rotation) > limit:
 				link.rotation = limit * sign(link.rotation)
 		else:
-			if link.rotation > limit: link.rotation = limit
-			elif link.rotation < 0: link.rotation = 0
+			if link.rotation < -limit: link.rotation = -limit
+			elif link.rotation > 0: link.rotation = 0
 		cnt += 1
 	return (target_position - terminus.global_position).length()
 

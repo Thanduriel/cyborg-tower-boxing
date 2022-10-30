@@ -5,7 +5,7 @@ export var jumpForce = 8
 var partScene = preload("res://Part.tscn")
 var stand_left = true
 var fixed_foot_pos = Vector2.ZERO
-var walking_ani_fact = 0.03
+var walking_ani_fact = 1.2
 var in_air_foot_dist = 80
 var forward_dir = 1.0
 export var isPlayerB = false
@@ -19,6 +19,10 @@ func _ready() -> void:
 	$Head/Joiner.stack(get_path(), $Head.get_path())
 
 func _process(_delta: float) -> void:
+#	print("O")
+#	for part in parts:
+#		print(part.get_name(), part.global_position.y)
+#	print(get_node($Head/Joiner/PinJoint2D.node_a).get_name())
 	if Input.is_action_just_pressed("spawn"):
 
 		var head = parts.pop_back() as RigidBody2D
@@ -34,7 +38,7 @@ func _process(_delta: float) -> void:
 		part.get_node("Joiner").stack(prev.get_path(), bodyPart.get_path())
 		parts.push_back(bodyPart)
 
-		head.global_position = part.global_position + up * 100
+		head.global_position = part.global_position + up * 110
 		head.global_rotation = part.global_rotation
 		head.get_node("Joiner").stack(bodyPart.get_path(), head.get_path())
 		parts.push_back(head)
@@ -49,7 +53,10 @@ func reach_smoothly(ik, target_bone, target_pos, delta):
 		
 	target_bone.global_rotation = Vector2.RIGHT.angle()
 
-func _physics_process(delta: float) -> void:
+func _physics_process(delta: float) -> void:	
+	var off = global_transform.basis_xform(Vector2.UP).angle_to(Vector2.UP)
+	apply_torque_impulse(off * delta * 500000)
+	
 	var is_touching_ground = false
 	for x in get_colliding_bodies():
 		if x.get_name() == "GroundCollider":
@@ -59,8 +66,12 @@ func _physics_process(delta: float) -> void:
 	if is_touching_ground:
 		var pre = "b_" if isPlayerB else "a_"
 		if Input.is_action_pressed(pre + "move_left"):
+			var ang = linear_velocity.dot(global_transform.basis_xform(Vector2.RIGHT).normalized())
+			apply_torque_impulse(-sign(ang)*pow(ang, 2) * delta * 20)
 			apply_central_impulse(Vector2.LEFT * speed * delta * weight)
 		elif Input.is_action_pressed(pre + "move_right"):
+			var ang = linear_velocity.dot(global_transform.basis_xform(Vector2.RIGHT).normalized())
+			apply_torque_impulse(-sign(ang)*pow(ang, 2) * delta * 20)
 			apply_central_impulse(Vector2.RIGHT * speed * delta * weight)
 		if Input.is_key_pressed(KEY_UP):
 			apply_central_impulse(Vector2.UP * jumpForce * weight)
@@ -86,12 +97,14 @@ func _physics_process(delta: float) -> void:
 
 		var pos = moving_leg.global_position
 		var v = linear_velocity.x
-		pos.x = moving_foot.global_position.x + walking_ani_fact * v
+		pos.x = moving_foot.global_position.x + walking_ani_fact * v * delta
 		var result = space_state.intersect_ray(pos,pos + Vector2.DOWN * 200, [self])
 		if result.size():
 			moving_ik.reach_toward(result.position)
 			moving_foot.global_rotation = Vector2.UP.angle_to_point(result.normal)
-
+			var par = result.normal.rotated(deg2rad(90)).normalized()
+			apply_central_impulse(-linear_velocity.dot(par) * par * delta * 50)
+			print(-linear_velocity.dot(par) * par)
 		pos = fixed_leg.global_position
 		pos.x = fixed_foot_pos.x
 		result = space_state.intersect_ray(pos,pos + Vector2.DOWN * 200, [self])
