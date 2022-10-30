@@ -5,12 +5,16 @@ extends RigidBody2D
 # var a: int = 2
 # var b: String = "text"
 
-
 export var speed: float = 500
 export var jumpForce = 8
-export var dont_move: bool = false
-
 var partScene = preload("res://Part.tscn")
+export var dont_move: bool = false
+var head = self
+var stand_left = true
+var fixed_foot_pos = Vector2.ZERO
+var walking_ani_fact = 0.03
+var forward_dir = 1.0
+
 
 onready var parts = [self, $Head]
 
@@ -43,28 +47,58 @@ func _process(_delta: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	var is_touching_ground = false
+	for x in get_colliding_bodies():
+		if x.get_name() == "GroundCollider":
+			is_touching_ground = true
+			break
+			
+	if not dont_move and is_touching_ground:
+		if Input.is_action_pressed("move_left"):
+			apply_central_impulse(Vector2.LEFT * speed * delta * weight)
+		elif Input.is_action_pressed("move_right"):
+			apply_central_impulse(Vector2.RIGHT * speed * delta * weight)
+		if Input.is_key_pressed(KEY_UP):
+			apply_central_impulse(Vector2.UP * jumpForce * weight)
+			
 	var space_state = get_world_2d().get_direct_space_state()
-	hip.rotation = -global_rotation
-
-	var pos = hip.get_node("leg_left").global_position
-	var result = space_state.intersect_ray(pos,pos + Vector2.DOWN * 200, [self])
-	if result.size():
-		$"IK-Left".reach_toward(result.position)
-		hip.get_node("leg_left/culf_left/lower_left").global_rotation = Vector2.UP.angle_to_point(result.normal)
-	pos = hip.get_node("leg_right").global_position
-	result = space_state.intersect_ray(pos,pos + Vector2.DOWN * 200, [self])
-	if result.size():
-		$"IK-Right".reach_toward(result.position)
-		hip.get_node("leg_right/culf_right/lower_rigth").global_rotation = Vector2.UP.angle_to_point(result.normal)
-
-
-	if not dont_move:
-		for x in get_colliding_bodies():
-			if x.get_name() == "GroundCollider":
-				if Input.is_action_pressed("move_left"):
-					apply_central_impulse(Vector2.LEFT * speed * delta * weight)
-				elif Input.is_action_pressed("move_right"):
-					apply_central_impulse(Vector2.RIGHT * speed * delta * weight)
-				if Input.is_key_pressed(KEY_UP):
-					apply_central_impulse(Vector2.UP * jumpForce * weight)
-
+	$"Visual/Skeleton2D/center/hip".rotation = -global_rotation 
+	
+	# walking
+	if is_touching_ground:
+		var moving_foot = $"Visual/Skeleton2D/center/hip/leg_left/culf_left/lower_left"
+		var moving_ik = $"IK-Left"
+		var moving_leg = $"Visual/Skeleton2D/center/hip/leg_left"
+		var fixed_foot = $"Visual/Skeleton2D/center/hip/leg_right/culf_right/lower_rigth"
+		var fixed_ik = $"IK-Right"
+		var fixed_leg = $"Visual/Skeleton2D/center/hip/leg_right"
+		if stand_left:
+			moving_foot = $"Visual/Skeleton2D/center/hip/leg_right/culf_right/lower_rigth"
+			moving_ik = $"IK-Right"
+			moving_leg = $"Visual/Skeleton2D/center/hip/leg_right"
+			fixed_foot = $"Visual/Skeleton2D/center/hip/leg_left/culf_left/lower_left"
+			fixed_ik = $"IK-Left"
+			fixed_leg = $"Visual/Skeleton2D/center/hip/leg_left"
+		
+		var pos = moving_leg.global_position
+		var v = linear_velocity.x
+		pos.x = moving_foot.global_position.x + walking_ani_fact * v
+		var result = space_state.intersect_ray(pos,pos + Vector2.DOWN * 200, [self])
+		if result.size():
+			moving_ik.reach_toward(result.position)
+			moving_foot.global_rotation = Vector2.UP.angle_to_point(result.normal)
+			
+		pos = fixed_leg.global_position
+		pos.x = fixed_foot_pos.x
+		result = space_state.intersect_ray(pos,pos + Vector2.DOWN * 200, [self])
+		if result.size():
+			fixed_foot.global_rotation = Vector2.UP.angle_to_point(result.normal)
+		fixed_ik.reach_toward(fixed_foot_pos)
+			
+		# switch legs if the fixed pos is streched to far
+		var d = fixed_foot.global_position.distance_to(fixed_foot_pos)
+		#var d = $"Skeleton2D/center/hip".global_position.distance_to(fixed_foot_pos)
+		var threshold = 1 if v * forward_dir >= 0 else 10
+		if d > threshold:
+			stand_left = not stand_left
+			fixed_foot_pos = moving_foot.global_position
