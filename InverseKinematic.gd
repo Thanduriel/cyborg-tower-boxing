@@ -9,7 +9,7 @@ export var rotate_terminus : bool
 
 export var joint_range_degrees : float = 175.0
 export var precision_cycles : int = 32
-
+export var is_elbow: bool = true
 var origin : Node2D
 var terminus : Node2D
 
@@ -45,7 +45,7 @@ func cycle(target_position : Vector2) -> float:
 			rotation_amount = limit * sign(rotation_amount)
 		link.rotation += rotation_amount
 		# stupid logic to dont bend elbow in the wrong direction
-		if cnt != 1:
+		if cnt != 1 or not is_elbow:
 			if abs(link.rotation) > limit:
 				link.rotation = limit * sign(link.rotation)
 		else:

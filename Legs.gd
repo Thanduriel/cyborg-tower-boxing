@@ -24,7 +24,14 @@ func _process(_delta: float) -> void:
 		get_tree().root.add_child(part)
 		head = part.get_node("Body")
 
+func below(pos) -> Vector2:
+	pos.y = 490
+	return pos
+
 func _physics_process(delta: float) -> void:
+	$"Skeleton2D/center/hip".rotation = -global_rotation 
+	$"IK-Left".reach_toward(below($"Skeleton2D/center/hip/leg_left".global_position))
+	$"IK-Right".reach_toward(below($"Skeleton2D/center/hip/leg_right".global_position))
 	if not dont_move:
 		for x in get_colliding_bodies():
 			if x.get_name() == "GroundCollider":
