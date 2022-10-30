@@ -26,7 +26,7 @@ margin_bottom = 106.0
 theme = ExtResource( 2 )
 text = "cYBORG tOWER bOXING"
 
-[node name="Button" type="Button" parent="CenterContainer/VBoxContainer"]
+[node name="Play" type="Button" parent="CenterContainer/VBoxContainer"]
 margin_top = 110.0
 margin_right = 912.0
 margin_bottom = 216.0
@@ -45,4 +45,4 @@ margin_right = 912.0
 margin_bottom = 242.0
 text = "made by some dudes on a Gamejam"
 
-[connection signal="pressed" from="CenterContainer/VBoxContainer/Button" to="." method="_on_Button_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/Play" to="." method="_on_Play_pressed"]
