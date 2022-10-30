@@ -6,6 +6,7 @@ var partScene = preload("res://Part.tscn")
 var stand_left = true
 var fixed_foot_pos = Vector2.ZERO
 var walking_ani_fact = 0.03
+var in_air_foot_dist = 80
 var forward_dir = 1.0
 export var isPlayerB = false
 
@@ -38,6 +39,15 @@ func _process(_delta: float) -> void:
 		head.get_node("Joiner").stack(bodyPart.get_path(), head.get_path())
 		parts.push_back(head)
 
+func reach_smoothly(ik, target_bone, target_pos, delta):
+	var current_pos = target_bone.global_position
+	var diff = target_pos - current_pos
+	var l = diff.length()
+	
+	if l > 0.1:
+		ik.reach_toward(current_pos + diff * min(1.0, delta * 256 / l))
+		
+	target_bone.global_rotation = Vector2.RIGHT.angle()
 
 func _physics_process(delta: float) -> void:
 	var is_touching_ground = false
@@ -96,3 +106,17 @@ func _physics_process(delta: float) -> void:
 		if d > threshold:
 			stand_left = not stand_left
 			fixed_foot_pos = moving_foot.global_position
+	else:
+		var target_pos = $"Visual/Skeleton2D/center/hip/leg_left".global_position
+		target_pos.y += in_air_foot_dist
+		var left_foot = $"Visual/Skeleton2D/center/hip/leg_left/culf_left/lower_left"
+		reach_smoothly($"IK-Left", left_foot, target_pos, delta)
+		
+		target_pos = $"Visual/Skeleton2D/center/hip/leg_right".global_position
+		target_pos.y += in_air_foot_dist
+		var right_foot = $"Visual/Skeleton2D/center/hip/leg_right/culf_right/lower_rigth"
+		reach_smoothly($"IK-Right", right_foot, target_pos, delta)
+		
+		fixed_foot_pos = left_foot.global_position if stand_left else right_foot.global_position
+	#	for i in range(0,$Visual/Skeleton2D.get_bone_count()):
+	#		$Visual/Skeleton2D.get_bone(i).apply_rest()
