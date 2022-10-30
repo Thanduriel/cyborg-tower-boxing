@@ -9,7 +9,7 @@
 rough = true
 
 [sub_resource type="CircleShape2D" id=9]
-radius = 8.69322
+radius = 7.54612
 
 [sub_resource type="CircleShape2D" id=8]
 radius = 46.0

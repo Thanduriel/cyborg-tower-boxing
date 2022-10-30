@@ -24,14 +24,22 @@ func _process(_delta: float) -> void:
 		get_tree().root.add_child(part)
 		head = part.get_node("Body")
 
-func below(pos) -> Vector2:
-	pos.y = 490
-	return pos
-
 func _physics_process(delta: float) -> void:
+	var space_state = get_world_2d().get_direct_space_state()
 	$"Skeleton2D/center/hip".rotation = -global_rotation 
-	$"IK-Left".reach_toward(below($"Skeleton2D/center/hip/leg_left".global_position))
-	$"IK-Right".reach_toward(below($"Skeleton2D/center/hip/leg_right".global_position))
+	
+	var pos = $"Skeleton2D/center/hip/leg_left".global_position
+	var result = space_state.intersect_ray(pos,pos + Vector2.DOWN * 200, [self])
+	if result.size():
+		$"IK-Left".reach_toward(result.position)
+		$"Skeleton2D/center/hip/leg_left/culf_left/lower_left".global_rotation = Vector2.UP.angle_to_point(result.normal)
+	pos = $"Skeleton2D/center/hip/leg_right".global_position
+	result = space_state.intersect_ray(pos,pos + Vector2.DOWN * 200, [self])
+	if result.size():
+		$"IK-Right".reach_toward(result.position)
+		$"Skeleton2D/center/hip/leg_right/culf_right/lower_rigth".global_rotation = Vector2.UP.angle_to_point(result.normal)
+	
+	
 	if not dont_move:
 		for x in get_colliding_bodies():
 			if x.get_name() == "GroundCollider":
