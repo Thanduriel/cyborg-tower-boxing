@@ -6,12 +6,13 @@ class_name Part
 # var b: String = "text"
 
 var projectileScene = preload("res://Projectile.tscn")
-
+onready var progress = get_node("Body/TextureProgress")
 # Called when the node enters the scene tree for the first time.
 var proj = null
 var ready: bool = true
 var offset: Vector2 = Vector2.RIGHT * 120
 func shoot() -> void:
+	progress.value = 100
 	ready = false
 	proj = projectileScene.instance()
 	proj.global_position =  $"Body".global_position + offset.rotated($"Body".global_rotation)
@@ -34,8 +35,9 @@ func _ready() -> void:
 var distance: float = 0
 var proj_valid: bool = false
 
-func _process(_delta: float) -> void:
-	if ready and Input.is_action_just_pressed("hit"):
+func _process(delta: float) -> void:
+	if progress.value > 0: progress.value -= delta * 40
+	if ready and progress.value <= 0 and Input.is_action_just_pressed("hit"):
 		shoot()
 	if proj and is_instance_valid(proj) and not proj.is_queued_for_deletion(): 
 		proj_valid = true

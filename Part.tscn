@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://Part.gd" type="Script" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
 [ext_resource path="res://InverseKinematic.gd" type="Script" id=3]
 [ext_resource path="res://assets/legs.png" type="Texture" id=4]
+[ext_resource path="res://progress.tscn" type="PackedScene" id=5]
 
 [sub_resource type="CircleShape2D" id=1]
 radius = 32.0156
@@ -51,6 +52,14 @@ skeleton = NodePath("../Skeleton2D")
 polygon = PoolVector2Array( 1153.46, 1250.03, 1339.95, 1301.38, 1188.6, 1604.09, 1242.65, 1844.63, 1194, 1890.57, 1029.14, 1620.3 )
 uv = PoolVector2Array( 1153.46, 1250.03, 1339.95, 1301.38, 1188.6, 1604.09, 1242.65, 1844.63, 1194, 1890.57, 1029.14, 1620.3 )
 bones = [ "Bone2D", PoolRealArray( 1, 1, 1, 0, 0, 1 ), "Bone2D/Bone2D", PoolRealArray( 0, 0, 0, 1, 1, 0 ), "Bone2D/Bone2D/Bone2D", PoolRealArray( 0, 0, 0, 0, 0, 0 ) ]
+
+[node name="TextureProgress" parent="Body" instance=ExtResource( 5 )]
+margin_left = -31.0
+margin_top = -31.0
+margin_right = 483.0
+margin_bottom = 481.0
+rect_scale = Vector2( 0.119843, 0.119843 )
+value = 45.0
 
 [node name="Spring left" type="DampedSpringJoint2D" parent="."]
 position = Vector2( -24, 74 )
