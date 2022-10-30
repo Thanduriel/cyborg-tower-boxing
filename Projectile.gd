@@ -14,16 +14,16 @@ var bound: bool = true
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	#global_rotation = origin.global_rotation
 
+	pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta: float) -> void:
 #	pass
 
 func _physics_process(delta: float) -> void:
-	var _c = move_and_collide(direction.rotated(origin.global_rotation) * speed * delta)
-	global_rotation = origin.global_rotation
+	var _c = move_and_collide(direction * speed * delta)
 
 
 func _on_Area2D_body_entered(body: Node) -> void:

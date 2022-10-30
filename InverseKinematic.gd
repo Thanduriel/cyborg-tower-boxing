@@ -50,7 +50,7 @@ func cycle(target_position : Vector2) -> float:
 				link.rotation = limit * sign(link.rotation)
 		else:
 			if link.rotation > limit: link.rotation = limit
-			elif link.rotation < 0: link.rotation = 0	
+			elif link.rotation < 0: link.rotation = 0
 		cnt += 1
 	return (target_position - terminus.global_position).length()
 
