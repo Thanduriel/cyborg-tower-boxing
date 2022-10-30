@@ -5,26 +5,42 @@ extends RigidBody2D
 # var a: int = 2
 # var b: String = "text"
 
+
 export var speed: float = 500
 export var jumpForce = 8
-var partScene = preload("res://Part.tscn")
 export var dont_move: bool = false
-var head = self
+
+var partScene = preload("res://Part.tscn")
+
+onready var parts = [self, $Head]
+
 
 onready var hip = $"Visual/Skeleton2D/center/hip"
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	$Head/Joiner.stack(get_path(), $Head.get_path())
 
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("spawn"):
+
+		var head = parts.pop_back() as RigidBody2D
+		var prev = parts.back() as RigidBody2D
+		var up = Vector2.UP.rotated(prev.global_rotation)
+
 		var part = partScene.instance()
-		part.global_position = head.global_position + Vector2.UP.rotated(head.global_rotation) * 70
-		part.global_rotation = head.global_rotation
-		part.stack(head.get_path())
+		part.global_position = prev.global_position + up * 70
+		part.global_rotation = prev.global_rotation
+		var bodyPart = part.get_node("Body")
 		get_tree().root.add_child(part)
-		head = part.get_node("Body")
+		part.get_node("Joiner").stack(prev.get_path(), bodyPart.get_path())
+		parts.push_back(bodyPart)
+
+		head.global_position = part.global_position + up * 80
+		head.global_rotation = part.global_rotation
+		head.get_node("Joiner").stack(bodyPart.get_path(), head.get_path())
+		parts.push_back(head)
+
 
 func _physics_process(delta: float) -> void:
 	var space_state = get_world_2d().get_direct_space_state()

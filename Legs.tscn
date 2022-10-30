@@ -1,5 +1,6 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
+[ext_resource path="res://scenes/Head.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Legs.gd" type="Script" id=2]
 [ext_resource path="res://assets/legs.png" type="Texture" id=3]
 [ext_resource path="res://InverseKinematic.gd" type="Script" id=4]
@@ -137,3 +138,6 @@ uv = PoolVector2Array( 1198.55, 1918.92, 1425.58, 1913.51, 1447.2, 1875.68, 1401
 polygons = [ PoolIntArray( 26, 32, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25 ), PoolIntArray( 26, 32, 33 ), PoolIntArray( 32, 33, 10 ), PoolIntArray( 33, 9, 10 ), PoolIntArray( 0, 35, 4, 3, 2, 1 ), PoolIntArray( 31, 0, 34 ), PoolIntArray( 5, 35, 34 ), PoolIntArray( 35, 0, 34 ), PoolIntArray( 4, 5, 35 ), PoolIntArray( 33, 27, 26 ), PoolIntArray( 33, 9, 8, 7, 6, 5, 34, 31, 30, 29, 28, 27 ) ]
 bones = [ "center", PoolRealArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ), "center/hip", PoolRealArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ), "center/hip/leg_right", PoolRealArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0 ), "center/hip/leg_right/culf_right", PoolRealArray( 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0 ), "center/hip/leg_right/culf_right/lower_rigth", PoolRealArray( 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ), "center/hip/leg_right/culf_right/lower_rigth/food_right", PoolRealArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ), "center/hip/leg_left", PoolRealArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ), "center/hip/leg_left/culf_left", PoolRealArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ), "center/hip/leg_left/culf_left/lower_left", PoolRealArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ), "center/hip/leg_left/culf_left/lower_left/food_left", PoolRealArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ) ]
 internal_vertex_count = 4
+
+[node name="Head" parent="." instance=ExtResource( 1 )]
+position = Vector2( 2, -112 )

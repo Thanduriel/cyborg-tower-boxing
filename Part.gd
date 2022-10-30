@@ -11,13 +11,14 @@ onready var progress = get_node("Body/TextureProgress")
 var proj = null
 var ready: bool = true
 var offset: Vector2 = Vector2.RIGHT * 120
+
 func shoot() -> void:
 	progress.value = 100
 	ready = false
 	proj = projectileScene.instance()
 	proj.global_position =  $"Body".global_position + offset.rotated($"Body".global_rotation)
 	proj.speed = 500
-	proj.parent = $"Body"
+	proj.origin = $Body
 	proj.direction = offset.normalized()
 	get_tree().root.add_child(proj)
 
@@ -51,10 +52,6 @@ func _process(delta: float) -> void:
 		$"Tween".interpolate_property(self, "distance", distance, 100, 0.5)
 		$"Tween".start()
 
-func stack(base: NodePath) -> void:
-	$"Spring left".node_a = base
-	$"Spring right".node_a = base
-	$"PinJoint2D".node_a = base
 
 func _on_Tween_completed(_object, _key):
 	pass # Replace with function body.

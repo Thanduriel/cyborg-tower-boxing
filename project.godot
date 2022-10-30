@@ -20,6 +20,11 @@ _global_script_classes=[ {
 "path": "res://InverseKinematic.gd"
 }, {
 "base": "Node2D",
+"class": "Joiner",
+"language": "GDScript",
+"path": "res://Joiner.gd"
+}, {
+"base": "Node2D",
 "class": "Part",
 "language": "GDScript",
 "path": "res://Part.gd"
@@ -27,6 +32,7 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "GitAPI": "",
 "InverseKinematic": "",
+"Joiner": "",
 "Part": ""
 }
 
