@@ -10,16 +10,19 @@ var projectileScene = preload("res://Projectile.tscn")
 # Called when the node enters the scene tree for the first time.
 var proj = null
 var ready: bool = true
+var offset: Vector2 = Vector2.RIGHT * 120
 func shoot() -> void:
 	ready = false
 	proj = projectileScene.instance()
-	proj.global_position =  $"Body".global_position + Vector2.RIGHT.rotated($"Body".global_rotation) * 120
+	proj.global_position =  $"Body".global_position + offset.rotated($"Body".global_rotation)
 	proj.speed = 500
 	proj.parent = $"Body"
+	proj.direction = offset.normalized()
 	get_tree().root.add_child(proj)
 	
 func _ready() -> void:
 	shoot()
+	
 	# var tracker = RemoteTransform2D.new()
 	# proj.add_child(tracker)
 	# tracker.update_position = true
@@ -57,7 +60,7 @@ func _on_Tween_completed(object, key):
 
 
 func _on_Tween_tween_step(object, key, elapsed, value):
-	$"Body/InverseKinematic".reach_toward($"Body".global_position + Vector2.RIGHT.rotated($"Body".global_rotation) * value)
+	$"Body/InverseKinematic".reach_toward($"Body".global_position + offset.normalized().rotated($"Body".global_rotation) * value)
 
 
 func _on_Tween_tween_completed(object, key):
