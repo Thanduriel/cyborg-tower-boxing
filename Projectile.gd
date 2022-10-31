@@ -14,6 +14,7 @@ var bound: bool = true
 var a: float = 10000
 var parent: Node2D = null
 var isPlayerB: bool = false
+var dmg: float = 0.25
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -38,12 +39,12 @@ func _on_Area2D_body_entered(body: Node) -> void:
 		var n = body.get_parent().get_name()
 		print(name)
 		if body.get_name() == "Head": 
-			body.hit(1)
+			body.hit(dmg)
 			print("hit Head")
 		elif isLegs.search(n): 
 			print("hit Legs")
 		elif isPart.search(n): 
-			body.get_parent().hit(1)
+			body.get_parent().hit(dmg)
 			print("hit part")
 		body.apply_central_impulse(direction * impluse)
 		origin.apply_central_impulse(-direction * impulse_on_hit)
