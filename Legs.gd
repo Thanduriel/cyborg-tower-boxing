@@ -28,6 +28,18 @@ func _ready() -> void:
 		$Head/Head.flip_h = true
 		$Head/CollisionShape2D.position.x *= -1
 	$Head/Joiner.stack(get_path(), $Head.get_path())
+func update_stack(node) -> void:
+	var old = parts
+	parts = []
+	var cnt = 0
+	for part in old:
+		if (cnt == 0) or (part.get_parent() != node and part != node and part.get_node("Joiner")):
+			parts.push_back(part)
+		cnt += 1
+	for i in range(1,len(parts)):
+		parts[i].get_node("Joiner").stack(parts[i-1].get_path(), parts[i].get_path())
+		var up = Vector2.UP.rotated(parts[i-1].global_rotation).normalized()
+		parts[i].global_position = parts[i-1].global_position
 
 func _process(_delta: float) -> void:
 #	print("O")
@@ -35,20 +47,15 @@ func _process(_delta: float) -> void:
 #		print(part.get_name(), part.global_position.y)
 #	print(get_node($Head/Joiner/PinJoint2D.node_a).get_name())
 	if Input.is_action_just_pressed("spawn"):
-		var old = parts
-		parts = []
-		for part in old:
-			if part and is_instance_valid(part):
-				parts.append(part)
 		var head = parts.pop_back() as RigidBody2D
 		var prev = parts.back() as RigidBody2D
 		var up = Vector2.UP.rotated(prev.global_rotation)
-
+	
 		var part = partScene.instance()
 		part.global_position = prev.global_position + up * 70
 		part.global_rotation = prev.global_rotation
 		part.isPlayerB = isPlayerB
-		part.top = head
+		part.legs = self
 		var bodyPart = part.get_node("Body")
 		get_tree().root.add_child(part)
 		part.get_node("Joiner").stack(prev.get_path(), bodyPart.get_path())

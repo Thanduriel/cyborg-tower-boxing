@@ -12,7 +12,7 @@ onready var progress = get_node("Body/TextureProgress")
 onready var damage = get_node("Body/Damage")
 var proj: KinematicBody2D = null
 var move_back: bool = true
-var top = null
+var legs = null
 onready var projOrigin = get_node("Body/Woble_Body/Projectile_Origin")
 var reachTowards: Vector2 = Vector2(0,0)
 onready var fist = $"Body/Visuals/Skeleton2D/Upper_Arm/Lower_Arm/Fist"
@@ -24,13 +24,7 @@ func hit(dmg: float) -> void:
 	var color = $Body.modulate
 	$Body.modulate = Color(1, color.g - dmg, color.b - dmg, 1)
 	if color.g <= 0:
-		var bottom = get_node($Joiner/PinJoint2D.node_a)
-		print("OO ", top.get_name(), bottom.get_name())
-		var joiner_top = top.get_child(0)
-		for child in joiner_top.get_children():
-			child.node_a = bottom.get_path();
-		var up = Vector2.UP.rotated(bottom.global_rotation)
-		# top.global_position.x = bottom.global_position * up * 70
+		legs.update_stack(self)
 		queue_free()
 	
 	
