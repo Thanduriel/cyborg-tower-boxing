@@ -11,11 +11,12 @@ export var impluse = 100
 var origin: RigidBody2D = null
 export var impulse_on_hit: float = 100
 var bound: bool = true
+var a: float = 10000
+var parent: Node2D = null
+var isPlayerB: bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	#global_rotation = origin.global_rotation
-
 	pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -24,11 +25,26 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	var _c = move_and_collide(direction * speed * delta)
-	speed += 10000 * delta
+	if parent:
+		pass
+	speed += a * delta
 
-
+var isPart = RegEx.new()
+var isLegs = RegEx.new()
 func _on_Area2D_body_entered(body: Node) -> void:
+	isPart.compile("@Part@[0-9]")
+	isLegs.compile("Legs .")
 	if body is RigidBody2D:
+		var n = body.get_parent().get_name()
+		print(name)
+		if body.get_name() == "Head": 
+			body.hit(1)
+			print("hit Head")
+		elif isLegs.search(n): 
+			print("hit Legs")
+		elif isPart.search(n): 
+			body.get_parent().hit(1)
+			print("hit part")
 		body.apply_central_impulse(direction * impluse)
 		origin.apply_central_impulse(-direction * impulse_on_hit)
 		queue_free()

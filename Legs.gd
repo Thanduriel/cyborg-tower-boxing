@@ -1,4 +1,5 @@
 extends RigidBody2D
+class_name Legs
 
 export var speed: float = 500
 export var jumpForce = 8
@@ -23,6 +24,9 @@ func _ready() -> void:
 		$Visual.scale.x *= -1.0
 		$"IK-Left".is_reversed = true
 		$"IK-Right".is_reversed = true
+		$Head/Chest.flip_h = true
+		$Head/Head.flip_h = true
+		$Head/CollisionShape2D.position.x *= -1
 	$Head/Joiner.stack(get_path(), $Head.get_path())
 
 func _process(_delta: float) -> void:
@@ -31,7 +35,11 @@ func _process(_delta: float) -> void:
 #		print(part.get_name(), part.global_position.y)
 #	print(get_node($Head/Joiner/PinJoint2D.node_a).get_name())
 	if Input.is_action_just_pressed("spawn"):
-
+		var old = parts
+		parts = []
+		for part in old:
+			if part and is_instance_valid(part):
+				parts.append(part)
 		var head = parts.pop_back() as RigidBody2D
 		var prev = parts.back() as RigidBody2D
 		var up = Vector2.UP.rotated(prev.global_rotation)
@@ -40,6 +48,7 @@ func _process(_delta: float) -> void:
 		part.global_position = prev.global_position + up * 70
 		part.global_rotation = prev.global_rotation
 		part.isPlayerB = isPlayerB
+		part.top = head
 		var bodyPart = part.get_node("Body")
 		get_tree().root.add_child(part)
 		part.get_node("Joiner").stack(prev.get_path(), bodyPart.get_path())

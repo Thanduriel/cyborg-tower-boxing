@@ -10,7 +10,8 @@ class_name Joiner
 func _ready() -> void:
 	pass # Replace with function body.
 
-
+func unlink() -> void:
+	print(get_node($"Spring left".node_a ).get_child(0).get_name())
 func stack(node_a: NodePath, node_b: NodePath) -> void:
 	$"Spring left".node_a = node_a
 	$"Spring right".node_a = node_a
