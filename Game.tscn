@@ -22,7 +22,7 @@ isPlayerB = true
 
 [node name="Ground" type="Sprite" parent="."]
 visible = false
-position = Vector2( 519, 863 )
+position = Vector2( 532, 868 )
 rotation = -0.123388
 scale = Vector2( 14.7634, 1.13733 )
 z_index = 1
@@ -54,9 +54,9 @@ shape = SubResource( 1 )
 
 [node name="BoxRight" type="Sprite" parent="."]
 visible = false
-position = Vector2( 1695, 844 )
+position = Vector2( 1697, 849 )
 rotation = 0.110078
-scale = Vector2( 1.72944, 1.13733 )
+scale = Vector2( 2.17556, 0.889997 )
 z_index = 1
 texture = ExtResource( 1 )
 
@@ -70,9 +70,9 @@ shape = SubResource( 1 )
 
 [node name="BoxLeft" type="Sprite" parent="."]
 visible = false
-position = Vector2( 180, 860 )
+position = Vector2( 215, 870 )
 rotation = -0.097603
-scale = Vector2( 1.72944, 1.13733 )
+scale = Vector2( 2.44601, 1.13733 )
 z_index = 1
 texture = ExtResource( 1 )
 
