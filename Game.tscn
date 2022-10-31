@@ -38,7 +38,7 @@ shape = SubResource( 1 )
 
 [node name="Ground2" type="Sprite" parent="."]
 visible = false
-position = Vector2( 1425, 853 )
+position = Vector2( 1427, 856 )
 rotation = 0.110078
 scale = Vector2( 13.8466, 1.13733 )
 z_index = 1
@@ -48,6 +48,38 @@ texture = ExtResource( 1 )
 physics_material_override = SubResource( 4 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Ground2/GroundCollider"]
+position = Vector2( 0, -1.20258 )
+scale = Vector2( 1, 0.662461 )
+shape = SubResource( 1 )
+
+[node name="BoxRight" type="Sprite" parent="."]
+visible = false
+position = Vector2( 1695, 844 )
+rotation = 0.110078
+scale = Vector2( 1.72944, 1.13733 )
+z_index = 1
+texture = ExtResource( 1 )
+
+[node name="GroundCollider" type="StaticBody2D" parent="BoxRight"]
+physics_material_override = SubResource( 4 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BoxRight/GroundCollider"]
+position = Vector2( 0, -1.20258 )
+scale = Vector2( 1, 0.662461 )
+shape = SubResource( 1 )
+
+[node name="BoxLeft" type="Sprite" parent="."]
+visible = false
+position = Vector2( 180, 860 )
+rotation = -0.097603
+scale = Vector2( 1.72944, 1.13733 )
+z_index = 1
+texture = ExtResource( 1 )
+
+[node name="GroundCollider" type="StaticBody2D" parent="BoxLeft"]
+physics_material_override = SubResource( 4 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BoxLeft/GroundCollider"]
 position = Vector2( 0, -1.20258 )
 scale = Vector2( 1, 0.662461 )
 shape = SubResource( 1 )

@@ -14,6 +14,8 @@ onready var parts = [self, $Head]
 
 onready var hip = $"Visual/Skeleton2D/center/hip"
 
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	if isPlayerB:
@@ -56,7 +58,8 @@ func reach_smoothly(ik, target_bone, target_pos, delta):
 	if l > 0.1:
 		ik.reach_toward(current_pos + diff * min(1.0, delta * 256 / l))
 		
-	target_bone.rotation = 0#Vector2.LEFT.angle() if isPlayerB  else Vector2.RIGHT.angle()
+	if abs(target_bone.rotation) > 0.01:
+		target_bone.rotation -= sign(target_bone.rotation) * min(abs(target_bone.rotation), delta * 4)#Vector2.LEFT.angle() if isPlayerB  else Vector2.RIGHT.angle()
 
 func _physics_process(delta: float) -> void:
 	var off = global_transform.basis_xform(Vector2.UP).angle_to(Vector2.UP)
@@ -106,16 +109,21 @@ func _physics_process(delta: float) -> void:
 		var result = space_state.intersect_ray(pos,pos + Vector2.DOWN * 200, [self])
 		if result.size():
 			moving_ik.reach_toward(result.position)
-			moving_foot.global_rotation = PI / 2 + atan2(result.normal.y, result.normal.x)
+			
+			var up = (moving_foot.get_parent().global_position - moving_foot.global_position).normalized()
+			var n = result.normal
+			moving_foot.rotation = -PI / 8 + forward_dir * (atan2(n.y, n.x)-atan2(up.y, up.x))
+			
 			var par = result.normal.rotated(deg2rad(90)).normalized()
 			apply_central_impulse(-linear_velocity.dot(par) * par * delta * 50)
-			print(-linear_velocity.dot(par) * par)
+		fixed_ik.reach_toward(fixed_foot_pos)
 		pos = fixed_leg.global_position
 		pos.x = fixed_foot_pos.x
 		result = space_state.intersect_ray(pos,pos + Vector2.DOWN * 200, [self])
 		if result.size():
-			fixed_foot.global_rotation = PI / 2 + atan2(result.normal.y, result.normal.x)
-		fixed_ik.reach_toward(fixed_foot_pos)
+			var up = (fixed_foot.get_parent().global_position - fixed_foot.global_position).normalized()
+			var n = result.normal
+			fixed_foot.rotation = -PI / 8 + forward_dir * (atan2(n.y, n.x)-atan2(up.y, up.x))
 
 		# switch legs if the fixed pos is streched to far
 		var d = fixed_foot.global_position.distance_to(fixed_foot_pos)
