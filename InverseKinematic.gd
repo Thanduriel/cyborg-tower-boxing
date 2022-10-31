@@ -12,6 +12,7 @@ export var precision_cycles : int = 32
 export var is_elbow: bool = true
 var origin : Node2D
 var terminus : Node2D
+var is_reversed : bool = false
 
 var ik_chain : Array
 
@@ -41,6 +42,8 @@ func cycle(target_position : Vector2) -> float:
 		var alpha_vector = terminus.global_position - link.global_position
 		var goal_vector = target_position - link.global_position
 		var rotation_amount = alpha_vector.angle_to(goal_vector)
+		if is_reversed:
+			rotation_amount = -rotation_amount
 		if abs(rotation_amount) > limit:
 			rotation_amount = limit * sign(rotation_amount)
 		link.rotation += rotation_amount
