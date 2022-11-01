@@ -11,24 +11,14 @@ export var impluse = 100
 var origin: RigidBody2D = null
 export var impulse_on_hit: float = 100
 var bound: bool = true
-var a: float = 10000
+export var accel: float = 10000
 var parent: Node2D = null
 var isPlayerB: bool = false
 var dmg: float = 0.25
 
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta: float) -> void:
-#	pass
-
 func _physics_process(delta: float) -> void:
 	var _c = move_and_collide(direction * speed * delta)
-	if parent:
-		pass
-	speed += a * delta
+	speed += accel * delta
 
 var isPart = RegEx.new()
 var isLegs = RegEx.new()

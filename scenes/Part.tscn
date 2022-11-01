@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://code/Part.gd" type="Script" id=1]
 [ext_resource path="res://code/InverseKinematic.gd" type="Script" id=2]
@@ -10,11 +10,9 @@
 [sub_resource type="CircleShape2D" id=1]
 radius = 35.0
 
-[sub_resource type="CircleShape2D" id=2]
-radius = 18.0278
-
 [node name="Part" type="Node2D"]
 script = ExtResource( 1 )
+cooldown = 0.5
 reach = 100
 
 [node name="Joiner" parent="." instance=ExtResource( 3 )]
@@ -27,7 +25,7 @@ mass = 0.2
 shape = SubResource( 1 )
 
 [node name="Woble_Body" type="RigidBody2D" parent="Body"]
-position = Vector2( 123, -15 )
+position = Vector2( 99, -31 )
 collision_layer = 0
 collision_mask = 0
 mass = 0.1
@@ -39,9 +37,6 @@ node_b = NodePath("../..")
 softness = 2.0
 
 [node name="Projectile_Origin" type="Position2D" parent="Body/Woble_Body"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Body/Woble_Body"]
-shape = SubResource( 2 )
 
 [node name="Visuals" type="Node2D" parent="Body"]
 
@@ -93,6 +88,20 @@ margin_bottom = 481.0
 rect_scale = Vector2( 0.119843, 0.119843 )
 value = 0.0
 tint_progress = Color( 1, 0, 0, 0.423529 )
+
+[node name="ReachTowards" type="RigidBody2D" parent="Body"]
+position = Vector2( 123, -15 )
+mass = 8.0
+gravity_scale = 0.0
+
+[node name="ReachFollow" type="RigidBody2D" parent="Body"]
+position = Vector2( 123, -15 )
+gravity_scale = 0.0
+
+[node name="PinJoint2D" type="PinJoint2D" parent="Body"]
+node_a = NodePath("../ReachTowards")
+node_b = NodePath("../ReachFollow")
+bias = 0.5
 
 [node name="InverseKinematic" type="Node" parent="."]
 script = ExtResource( 2 )

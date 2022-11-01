@@ -14,7 +14,8 @@ var proj: KinematicBody2D = null
 var move_back: bool = true
 var top = null
 onready var projOrigin = get_node("Body/Woble_Body/Projectile_Origin")
-var reachTowards: Vector2 = Vector2(0,0)
+onready var reachTowars: RigidBody2D = $Body/ReachTowards
+onready var reachFollow: RigidBody2D = $Body/ReachFollow
 onready var fist = $"Body/Visuals/Skeleton2D/Upper_Arm/Lower_Arm/Fist"
 
 var distance: float = 0
@@ -41,7 +42,7 @@ func _ready() -> void:
 		$Body/Woble_Body.position.x *= -1
 		$Body/Woble_Body/PinJoint2D.disable_collision = !$Body/Woble_Body/PinJoint2D.disable_collision
 		$Body/Woble_Body/PinJoint2D.disable_collision = !$Body/Woble_Body/PinJoint2D.disable_collision
-	reachTowards = projOrigin.get_global_position()
+	reachTowars.global_position = projOrigin.global_position
 
 func _process(delta: float) -> void:
 	if progress.value > 0:
@@ -57,11 +58,11 @@ func _process(delta: float) -> void:
 		if Input.is_action_just_pressed(pre+"shoot"+post):
 			shoot()
 
-	$InverseKinematic.reach_toward(reachTowards)
+	$InverseKinematic.reach_toward(reachFollow.global_position)
 
 	if is_instance_valid(proj):
 		move_back = false
-		reachTowards = proj.global_position
+		reachTowars.global_position = proj.global_position
 		# fist is extended
 		if projOrigin.global_position.distance_to(proj.global_position) > reach:
 			proj.queue_free()
@@ -75,8 +76,7 @@ func _process(delta: float) -> void:
 		yield(attack_timer, "timeout")
 		move_back = true
 	elif move_back:
-		reachTowards = reachTowards.move_toward(projOrigin.global_position, delta * 500)
-
+		reachTowars.global_position = projOrigin.global_position
 
 
 
@@ -84,7 +84,6 @@ func shoot() -> void:
 	progress.value = 100
 	proj = projectileScene.instance()
 	proj.global_position =  projOrigin.global_position
-	proj.speed = 500
 	proj.origin = $Body
 	proj.impluse = 1000
 	proj.impulse_on_hit = 300

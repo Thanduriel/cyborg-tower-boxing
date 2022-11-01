@@ -28,10 +28,6 @@ func _ready() -> void:
 	$Head/Joiner.stack(get_path(), $Head.get_path())
 
 func _process(_delta: float) -> void:
-#	print("O")
-#	for part in parts:
-#		print(part.get_name(), part.global_position.y)
-#	print(get_node($Head/Joiner/PinJoint2D.node_a).get_name())
 	if Input.is_action_just_pressed("spawn"):
 		var old = parts
 		parts = []
@@ -82,6 +78,8 @@ func _physics_process(delta: float) -> void:
 
 	if $GroundCast.is_colliding():
 		is_touching_ground = true
+	if $GroundCast2.is_colliding():
+		is_touching_ground = true
 
 	if is_touching_ground:
 		var pre = "b_" if isPlayerB else "a_"
@@ -100,6 +98,7 @@ func _physics_process(delta: float) -> void:
 	$"Visual/Skeleton2D/center/hip".rotation = -forward_dir * global_rotation
 
 	# walking
+	if not is_touching_ground: print("hover")
 	if is_touching_ground:
 		var moving_foot = $"Visual/Skeleton2D/center/hip/leg_left/culf_left/lower_left"
 		var moving_ik = $"IK-Left"
@@ -118,7 +117,7 @@ func _physics_process(delta: float) -> void:
 		var pos = moving_leg.global_position
 		var v = linear_velocity.x
 		pos.x = moving_foot.global_position.x + walking_ani_fact * v * delta
-		var result = space_state.intersect_ray(pos,pos + Vector2.DOWN * 200, [self])
+		var result = space_state.intersect_ray(pos, pos + Vector2.DOWN * 200, [self])
 		if result.size():
 			moving_ik.reach_toward(result.position)
 
@@ -131,7 +130,7 @@ func _physics_process(delta: float) -> void:
 		fixed_ik.reach_toward(fixed_foot_pos)
 		pos = fixed_leg.global_position
 		pos.x = fixed_foot_pos.x
-		result = space_state.intersect_ray(pos,pos + Vector2.DOWN * 200, [self])
+		result = space_state.intersect_ray(pos, pos + Vector2.DOWN * 200, [self])
 		if result.size():
 			var up = (fixed_foot.get_parent().global_position - fixed_foot.global_position).normalized()
 			var n = result.normal

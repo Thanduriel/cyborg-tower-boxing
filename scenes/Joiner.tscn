@@ -8,7 +8,7 @@ script = ExtResource( 1 )
 [node name="PinJoint2D" type="PinJoint2D" parent="."]
 rotation = 0.00235063
 bias = 0.8
-softness = 10.0
+softness = 6.0
 
 [node name="PinJoint2D2" type="PinJoint2D" parent="."]
 position = Vector2( -42, 0 )
