@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://icon.png" type="Texture" id=1]
-[ext_resource path="res://Legs.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scenes/Legs.tscn" type="PackedScene" id=2]
 
 [sub_resource type="PhysicsMaterial" id=4]
 friction = 0.0
@@ -16,7 +16,6 @@ position = Vector2( 184, 365 )
 
 [node name="Legs2" parent="." instance=ExtResource( 2 )]
 position = Vector2( 844, 418 )
-dont_move = true
 
 [node name="Ground" type="Sprite" parent="."]
 position = Vector2( 273.379, 493.658 )

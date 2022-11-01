@@ -10,7 +10,7 @@ class_name Head
 func _ready():
 	pass # Replace with function body.
 
-func hit(dmg: float):	
+func hit(dmg: float):
 	var color = modulate
 	modulate = Color(1, color.g - dmg, color.b - dmg, 1)
 	if color.g <= 0:

@@ -1,11 +1,11 @@
 [gd_scene load_steps=9 format=2]
 
-[ext_resource path="res://Part.gd" type="Script" id=1]
-[ext_resource path="res://assets/chest.png" type="Texture" id=2]
-[ext_resource path="res://InverseKinematic.gd" type="Script" id=3]
-[ext_resource path="res://assets/arm.png" type="Texture" id=4]
-[ext_resource path="res://progress.tscn" type="PackedScene" id=5]
-[ext_resource path="res://scenes/Joiner.tscn" type="PackedScene" id=6]
+[ext_resource path="res://code/Part.gd" type="Script" id=1]
+[ext_resource path="res://code/InverseKinematic.gd" type="Script" id=2]
+[ext_resource path="res://scenes/Joiner.tscn" type="PackedScene" id=3]
+[ext_resource path="res://assets/chest.png" type="Texture" id=4]
+[ext_resource path="res://scenes/Progress.tscn" type="PackedScene" id=5]
+[ext_resource path="res://assets/arm.png" type="Texture" id=6]
 
 [sub_resource type="CircleShape2D" id=1]
 radius = 35.0
@@ -17,12 +17,11 @@ radius = 18.0278
 script = ExtResource( 1 )
 reach = 100
 
-[node name="Joiner" parent="." instance=ExtResource( 6 )]
+[node name="Joiner" parent="." instance=ExtResource( 3 )]
+position = Vector2( 0, 38 )
 
 [node name="Body" type="RigidBody2D" parent="."]
 mass = 0.2
-gravity_scale = 0.5
-linear_damp = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Body"]
 shape = SubResource( 1 )
@@ -49,7 +48,7 @@ shape = SubResource( 2 )
 [node name="Icon" type="Sprite" parent="Body/Visuals"]
 position = Vector2( 7, -3 )
 scale = Vector2( 0.321388, 0.321388 )
-texture = ExtResource( 2 )
+texture = ExtResource( 4 )
 
 [node name="Skeleton2D" type="Skeleton2D" parent="Body/Visuals"]
 position = Vector2( 3, -2 )
@@ -70,7 +69,7 @@ rest = Transform2D( 1, 0, 0, 1, 0, 102 )
 [node name="Polygon2D" type="Polygon2D" parent="Body/Visuals"]
 position = Vector2( -3, -41 )
 scale = Vector2( 0.457055, 0.457055 )
-texture = ExtResource( 4 )
+texture = ExtResource( 6 )
 skeleton = NodePath("../Skeleton2D")
 polygon = PoolVector2Array( 87.2341, 94.1489, 28.1915, 170.213, 28.1915, 205.851, -19.149, 278.723, 6.91489, 407.979, 28.7234, 418.085, 58.5106, 456.383, 124.468, 448.936, 123.404, 390.426, 98.4042, 371.277, 113.298, 220.745, 122.34, 180.319, 195.745, 79.7872, 179.787, 12.766, 120.745, -18.0851, 64.8936, 38.8298, 130.851, 52.6596, 80.3191, 169.149, 68.0851, 212.766, 51.0638, 381.383, 77.1277, 415.957, 141.489, 84.0426 )
 uv = PoolVector2Array( 87.2341, 94.1489, 28.1915, 170.213, 28.1915, 205.851, -19.149, 278.723, 6.91489, 407.979, 28.7234, 418.085, 58.5106, 456.383, 124.468, 448.936, 123.404, 390.426, 98.4042, 371.277, 113.298, 220.745, 122.34, 180.319, 195.745, 79.7872, 179.787, 12.766, 120.745, -18.0851, 64.8936, 38.8298, 130.851, 52.6596, 80.3191, 169.149, 68.0851, 212.766, 51.0638, 381.383, 77.1277, 415.957, 141.489, 84.0426 )
@@ -96,7 +95,7 @@ value = 0.0
 tint_progress = Color( 1, 0, 0, 0.423529 )
 
 [node name="InverseKinematic" type="Node" parent="."]
-script = ExtResource( 3 )
+script = ExtResource( 2 )
 origin_node = NodePath("../Body/Visuals/Skeleton2D/Upper_Arm")
 terminus_node = NodePath("../Body/Visuals/Skeleton2D/Upper_Arm/Lower_Arm/Fist")
 joint_range_degrees = 360.0

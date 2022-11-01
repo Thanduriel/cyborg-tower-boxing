@@ -38,12 +38,12 @@ func _on_Area2D_body_entered(body: Node) -> void:
 	if body is RigidBody2D:
 		var n = body.get_parent().get_name()
 		print(name)
-		if body.get_name() == "Head": 
+		if body.get_name() == "Head":
 			body.hit(dmg)
 			print("hit Head")
-		elif isLegs.search(n): 
+		elif isLegs.search(n):
 			print("hit Legs")
-		elif isPart.search(n): 
+		elif isPart.search(n):
 			body.get_parent().hit(dmg)
 			print("hit part")
 		body.apply_central_impulse(direction * impluse)
