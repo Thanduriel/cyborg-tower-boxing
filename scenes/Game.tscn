@@ -10,7 +10,7 @@
 position = Vector2( 373, 749 )
 
 [node name="Legs B" parent="." instance=ExtResource( 2 )]
-position = Vector2( 1596, 719 )
+position = Vector2( 1546, 675 )
 isPlayerB = true
 
 [node name="Foreground" type="Sprite" parent="."]
@@ -22,7 +22,6 @@ texture = ExtResource( 4 )
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Foreground/StaticBody2D"]
 position = Vector2( 14.2179, -6.7301 )
-scale = Vector2( 1, 1 )
 polygon = PoolVector2Array( -832.29, -312.949, -784.168, -319.679, -749.17, -316.314, -743.702, -267.521, -602.617, -296.123, -434.191, -339.869, -153.115, -403.805, 56.8713, -425.677, 209.986, -430.725, 325.916, -402.122, 512.935, -343.234, 722.922, -306.219, 725.109, -349.964, 865.1, -338.186, 890.255, -1117.19, 1012.75, -1113.83, 1025.87, 508.121, -1029.15, 519.898, -1013.84, -972.496, -872.756, -965.766 )
 
 [node name="Camera2D" type="Camera2D" parent="."]

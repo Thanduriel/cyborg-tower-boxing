@@ -3,28 +3,28 @@ class_name Legs
 
 export var speed: float = 500
 export var jumpForce = 8
-var partScene = preload("res://scenes/Part.tscn")
-var stand_left = true
-var fixed_foot_pos = Vector2.ZERO
-var walking_ani_fact = 1.2
-var in_air_foot_dist = 80
-var forward_dir = 1.0
 export var isPlayerB = false
 
-onready var parts = [self, $Head]
+var partScene = preload("res://scenes/Part.tscn")
+var standLeft = true
+var fixedFootPos = Vector2.ZERO
+var fixedFootNormal = Vector2.UP
+var wasTouchingGround = false
 
-onready var hip = $"Visual/Skeleton2D/center/hip"
+onready var parts = [self, $Head]
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	if isPlayerB:
-		forward_dir *= -1.0
-		$Visual.scale.x *= -1.0
-		$"IK-Left".is_reversed = true
-		$"IK-Right".is_reversed = true
+		#apply_scale(Vector2(-1, 1))
+		#scale.x *= -1.0
+		$Polygons.scale *= Vector2(-1, 1)
+		$LeftIk.is_reversed = true
+		$RightIk.is_reversed = true
 		$Head/Chest.flip_h = true
 		$Head/Head.flip_h = true
 		$Head/CollisionShape2D.position.x *= -1
+
 	$Head/Joiner.stack(get_path(), $Head.get_path())
 
 func _process(_delta: float) -> void:
@@ -67,93 +67,59 @@ func reach_smoothly(ik, target_bone, target_pos, delta):
 		target_bone.rotation -= sign(target_bone.rotation) * min(abs(target_bone.rotation), delta * 4)#Vector2.LEFT.angle() if isPlayerB  else Vector2.RIGHT.angle()
 
 func _physics_process(delta: float) -> void:
-	var off = global_transform.basis_xform(Vector2.UP).angle_to(Vector2.UP)
-	apply_torque_impulse(off * delta * 500000)
+	var onGround = isTouchingGround()
+	var standCast: RayCast2D = $LeftCast if standLeft else $RightCast
+	var moveCast: RayCast2D = $RightCast if standLeft else $LeftCast
 
-	var is_touching_ground = false
-	for x in get_colliding_bodies():
-		if x.is_in_group("Ground"):
-			is_touching_ground = true
-			break
+	$RightCast.rotation = linear_velocity.x * -.001 - deg2rad(8)
+	$LeftCast.rotation = linear_velocity.x * -.001 + deg2rad(8)
 
-	if $GroundCast.is_colliding():
-		is_touching_ground = true
-	if $GroundCast2.is_colliding():
-		is_touching_ground = true
-
-	if is_touching_ground:
+	if onGround:
 		var pre = "b_" if isPlayerB else "a_"
 		if Input.is_action_pressed(pre + "move_left"):
-			#var ang = linear_velocity.dot(global_transform.basis_xform(Vector2.RIGHT).normalized())
-			# apply_torque_impulse(-sign(ang)*pow(ang, 2) * delta * 20)
 			apply_central_impulse(Vector2.LEFT * speed * delta * weight)
 		elif Input.is_action_pressed(pre + "move_right"):
-			#var ang = linear_velocity.dot(global_transform.basis_xform(Vector2.RIGHT).normalized())
-			# apply_torque_impulse(-sign(ang)*pow(ang, 2) * delta * 20)
 			apply_central_impulse(Vector2.RIGHT * speed * delta * weight)
-		if Input.is_key_pressed(KEY_UP):
+		if Input.is_action_just_pressed(pre + "jump"):
 			apply_central_impulse(Vector2.UP * jumpForce * weight)
 
-	var space_state = get_world_2d().get_direct_space_state()
-	$"Visual/Skeleton2D/center/hip".rotation = -forward_dir * global_rotation
+		# stand
+		var standIk: InverseKinematic = $LeftIk if standLeft else $RightIk
+		#standIk.reach_toward(fixedFootPos)
+		var standFoot = standIk.get_node(standIk.terminus_node) as Node2D
+		standFoot.global_rotation = Vector2.UP.angle_to(fixedFootNormal)
+		standIk.reach_toward(standFoot.global_position.move_toward(fixedFootPos, delta * 800))
 
-	# walking
-	if not is_touching_ground: print("hover")
-	if is_touching_ground:
-		var moving_foot = $"Visual/Skeleton2D/center/hip/leg_left/culf_left/lower_left"
-		var moving_ik = $"IK-Left"
-		var moving_leg = $"Visual/Skeleton2D/center/hip/leg_left"
-		var fixed_foot = $"Visual/Skeleton2D/center/hip/leg_right/culf_right/lower_rigth"
-		var fixed_ik = $"IK-Right"
-		var fixed_leg = $"Visual/Skeleton2D/center/hip/leg_right"
-		if stand_left:
-			moving_foot = $"Visual/Skeleton2D/center/hip/leg_right/culf_right/lower_rigth"
-			moving_ik = $"IK-Right"
-			moving_leg = $"Visual/Skeleton2D/center/hip/leg_right"
-			fixed_foot = $"Visual/Skeleton2D/center/hip/leg_left/culf_left/lower_left"
-			fixed_ik = $"IK-Left"
-			fixed_leg = $"Visual/Skeleton2D/center/hip/leg_left"
+		# move
+		var cycle = standCast.global_position.distance_to(fixedFootPos) / standCast.cast_to.length()
 
-		var pos = moving_leg.global_position
-		var v = linear_velocity.x
-		pos.x = moving_foot.global_position.x + walking_ani_fact * v * delta
-		var result = space_state.intersect_ray(pos, pos + Vector2.DOWN * 200, [self])
-		if result.size():
-			moving_ik.reach_toward(result.position)
+		var velocityMod = clamp(1 - abs(linear_velocity.x)/200, 0, 1)
+		var cycleMode = 1 - (1-cycle) * 1.5
+		var velocityCycle = clamp(cycleMode + velocityMod, 0, 1)
+		var target = (moveCast.get_collision_point() - moveCast.global_position) * velocityCycle + moveCast.global_position
 
-			var up = (moving_foot.get_parent().global_position - moving_foot.global_position).normalized()
-			var n = result.normal
-			moving_foot.rotation = -PI / 8 + forward_dir * (atan2(n.y, n.x)-atan2(up.y, up.x))
+		var moveIk: InverseKinematic = $RightIk if standLeft else $LeftIk
+		var moveFoot = standIk.get_node(moveIk.terminus_node) as Node2D
+		moveFoot.global_rotation = Vector2.UP.angle_to(moveCast.get_collision_normal()) - 1.5*(1-velocityCycle)
+		moveIk.reach_toward(moveFoot.global_position.move_toward(target, delta * 500))
 
-			var par = result.normal.rotated(deg2rad(90)).normalized()
-			apply_central_impulse(-linear_velocity.dot(par) * par * delta * 50)
-		fixed_ik.reach_toward(fixed_foot_pos)
-		pos = fixed_leg.global_position
-		pos.x = fixed_foot_pos.x
-		result = space_state.intersect_ray(pos, pos + Vector2.DOWN * 200, [self])
-		if result.size():
-			var up = (fixed_foot.get_parent().global_position - fixed_foot.global_position).normalized()
-			var n = result.normal
-			fixed_foot.rotation = -PI / 8 + forward_dir * (atan2(n.y, n.x)-atan2(up.y, up.x))
+		if cycle > 1:
+			standLeft = not standLeft
+			standCast = moveCast
+			wasTouchingGround = false
 
-		# switch legs if the fixed pos is streched to far
-		var d = fixed_foot.global_position.distance_to(fixed_foot_pos)
-		#var d = $"Skeleton2D/center/hip".global_position.distance_to(fixed_foot_pos)
-		var threshold = 1 if v * forward_dir >= 0 else 10
-		if d > threshold:
-			stand_left = not stand_left
-			fixed_foot_pos = moving_foot.global_position
-	else:
-		var target_pos = $"Visual/Skeleton2D/center/hip/leg_left".global_position
-		target_pos.y += in_air_foot_dist
-		var left_foot = $"Visual/Skeleton2D/center/hip/leg_left/culf_left/lower_left"
-		reach_smoothly($"IK-Left", left_foot, target_pos, delta)
+	if onGround and not wasTouchingGround:
+		fixedFootPos = standCast.get_collision_point()
+		fixedFootNormal = standCast.get_collision_normal()
 
-		target_pos = $"Visual/Skeleton2D/center/hip/leg_right".global_position
-		target_pos.y += in_air_foot_dist
-		var right_foot = $"Visual/Skeleton2D/center/hip/leg_right/culf_right/lower_rigth"
-		reach_smoothly($"IK-Right", right_foot, target_pos, delta)
+	wasTouchingGround = onGround
 
-		fixed_foot_pos = left_foot.global_position if stand_left else right_foot.global_position
-	#	for i in range(0,$Visual/Skeleton2D.get_bone_count()):
-	#		$Visual/Skeleton2D.get_bone(i).apply_rest()
+func isTouchingGround():
+	for x in get_colliding_bodies():
+		if x.is_in_group("Ground"):
+			return true
+	if $LeftCast.is_colliding():
+		return true
+	if $RightCast.is_colliding():
+		return true
+	return false
