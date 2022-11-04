@@ -16,9 +16,8 @@ onready var parts = [self, $Head]
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	if isPlayerB:
-		#apply_scale(Vector2(-1, 1))
-		#scale.x *= -1.0
 		$Polygons.scale *= Vector2(-1, 1)
+		$Skeleton2D.scale *= Vector2(-1, 1)
 		$LeftIk.is_reversed = true
 		$RightIk.is_reversed = true
 		$Head/Chest.flip_h = true
@@ -40,8 +39,8 @@ func _process(_delta: float) -> void:
 		var up = Vector2.UP.rotated(prev.global_rotation)
 
 		var part = partScene.instance()
-		part.global_position = prev.global_position + up * 70
-		part.global_rotation = prev.global_rotation
+		part.global_position = prev.global_position + up * 65
+		part.global_rotation = prev.global_rotation + deg2rad(-3 if isPlayerB else 3)
 		part.isPlayerB = isPlayerB
 		part.top = head
 		part.index = parts.size()
@@ -80,6 +79,9 @@ func _physics_process(delta: float) -> void:
 			apply_central_impulse(Vector2.LEFT * speed * delta * weight)
 		elif Input.is_action_pressed(pre + "move_right"):
 			apply_central_impulse(Vector2.RIGHT * speed * delta * weight)
+
+		apply_central_impulse(-pow(linear_velocity.x,2) * (linear_velocity.normalized()*Vector2.RIGHT) * .001)
+
 		if Input.is_action_just_pressed(pre + "jump"):
 			apply_central_impulse(Vector2.UP * jumpForce * weight)
 
@@ -94,13 +96,13 @@ func _physics_process(delta: float) -> void:
 		var cycle = standCast.global_position.distance_to(fixedFootPos) / standCast.cast_to.length()
 
 		var velocityMod = clamp(1 - abs(linear_velocity.x)/200, 0, 1)
-		var cycleMode = 1 - (1-cycle) * 1.5
+		var cycleMode = 1 - (1-cycle) * 1.2
 		var velocityCycle = clamp(cycleMode + velocityMod, 0, 1)
 		var target = (moveCast.get_collision_point() - moveCast.global_position) * velocityCycle + moveCast.global_position
 
 		var moveIk: InverseKinematic = $RightIk if standLeft else $LeftIk
 		var moveFoot = standIk.get_node(moveIk.terminus_node) as Node2D
-		moveFoot.global_rotation = Vector2.UP.angle_to(moveCast.get_collision_normal()) - 1.5*(1-velocityCycle)
+		moveFoot.global_rotation = Vector2.UP.angle_to(moveCast.get_collision_normal()) - 1.5*(1-velocityCycle) * (-1 if isPlayerB else 1)
 		moveIk.reach_toward(moveFoot.global_position.move_toward(target, delta * 500))
 
 		if cycle > 1:
